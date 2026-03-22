@@ -76,28 +76,13 @@ export async function trackUsage(
   latencyMs: number,
   status: 'success' | 'error' | 'rate_limited' = 'success'
 ): Promise<void> {
-  // Increment counter
-  await supabase.rpc('', {}).catch(() => {});
-  await supabase
-    .from('api_keys')
-    .update({
-      requests_used: supabase.rpc ? undefined : undefined,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', apiKeyId);
-
-  // Use a raw SQL increment to avoid race conditions
-  await supabase.from('api_keys').update({
-    updated_at: new Date().toISOString(),
-  }).eq('id', apiKeyId);
-
-  // Simpler: just increment via raw query
-  const { error: incrementError } = await supabase.rpc('increment_usage', {
+  // Try atomic increment via RPC first, fall back to manual update
+  const { error: rpcError } = await supabase.rpc('increment_usage', {
     key_id: apiKeyId,
-  }).catch(() => ({ error: null })) as any;
+  });
 
-  // If RPC doesn't exist, do a manual read-increment-write
-  if (incrementError) {
+  if (rpcError) {
+    // Fallback: manual read-increment-write
     const { data: current } = await supabase
       .from('api_keys')
       .select('requests_used')
@@ -107,7 +92,10 @@ export async function trackUsage(
     if (current) {
       await supabase
         .from('api_keys')
-        .update({ requests_used: current.requests_used + 1, updated_at: new Date().toISOString() })
+        .update({
+          requests_used: (current as { requests_used: number }).requests_used + 1,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', apiKeyId);
     }
   }
