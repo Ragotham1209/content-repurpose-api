@@ -10,7 +10,7 @@ export default function Home() {
         <div className="flex items-center gap-6 text-sm text-[#888]">
           <a href="/docs" className="hover:text-white transition-colors">Docs</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="/api/auth/signup" className="bg-[#00ff9d] text-black font-medium px-4 py-2 rounded-lg hover:bg-[#00e68a] transition-colors">Get API Key</a>
+          <a href="/signup" className="bg-[#00ff9d] text-black font-medium px-4 py-2 rounded-lg hover:bg-[#00e68a] transition-colors">Get API Key</a>
         </div>
       </nav>
 
@@ -112,19 +112,26 @@ export default function Home() {
           <p className="text-center text-[#888] mb-12">Start free. Upgrade when you need more.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { name: 'Free', price: '$0', period: 'forever', calls: '100 / mo', platforms: '3 platforms', highlight: false },
-              { name: 'Starter', price: '$29', period: '/month', calls: '1,000 / mo', platforms: 'All platforms', highlight: false },
-              { name: 'Pro', price: '$79', period: '/month', calls: '5,000 / mo', platforms: 'All + bulk endpoint', highlight: true },
-              { name: 'Scale', price: '$199', period: '/month', calls: '25,000 / mo', platforms: 'All + webhooks', highlight: false },
+              { name: 'Free', price: '$0', period: 'forever', calls: '100 / mo', platforms: '3 platforms', highlight: false, cta: 'Get Started Free' },
+              { name: 'Starter', price: '$29', period: '/month', calls: '1,000 / mo', platforms: 'All platforms', highlight: false, cta: 'Start with Starter' },
+              { name: 'Pro', price: '$79', period: '/month', calls: '5,000 / mo', platforms: 'All + bulk endpoint', highlight: true, cta: 'Go Pro' },
+              { name: 'Scale', price: '$199', period: '/month', calls: '25,000 / mo', platforms: 'All + webhooks', highlight: false, cta: 'Scale Up' },
             ].map((plan, i) => (
-              <div key={i} className={`rounded-xl p-6 border transition-colors ${plan.highlight ? 'bg-[#0a1a10] border-[#00ff9d]/30' : 'bg-[#111] border-[#222] hover:border-[#333]'}`}>
+              <a
+                key={i}
+                href="/signup"
+                className={`block rounded-xl p-6 border transition-all hover:-translate-y-1 ${plan.highlight ? 'bg-[#0a1a10] border-[#00ff9d]/30 hover:border-[#00ff9d]/60 hover:shadow-[0_8px_32px_rgba(0,255,157,0.1)]' : 'bg-[#111] border-[#222] hover:border-[#444] hover:shadow-[0_8px_32px_rgba(255,255,255,0.03)]'}`}
+              >
                 <div className={`text-xs font-mono mb-2 ${plan.highlight ? 'text-[#00ff9d]' : 'text-[#888]'}`}>{plan.name}</div>
                 <div className="text-3xl font-bold text-white mb-1">{plan.price}<span className="text-base text-[#888] font-normal">{plan.period}</span></div>
                 <div className="text-sm text-[#888] mt-4 space-y-2">
                   <div>{plan.calls}</div>
                   <div>{plan.platforms}</div>
                 </div>
-              </div>
+                <div className={`mt-6 text-center py-2.5 rounded-lg text-sm font-medium transition-colors ${plan.highlight ? 'bg-[#00ff9d] text-black hover:bg-[#00e68a]' : 'bg-[#222] text-white hover:bg-[#333]'}`}>
+                  {plan.cta}
+                </div>
+              </a>
             ))}
           </div>
         </div>
