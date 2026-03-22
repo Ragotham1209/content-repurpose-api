@@ -1,7 +1,13 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
+  }
+  return _openai;
+}
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 
 // ---- Input validation schema ----
@@ -81,7 +87,7 @@ ${sourceContent}
 
 Return ONLY a valid JSON object. No markdown code fences. No explanation.`;
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: MODEL,
     messages: [
       { role: 'system', content: systemPrompt },

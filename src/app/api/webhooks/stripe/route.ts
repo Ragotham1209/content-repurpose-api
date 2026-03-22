@@ -3,15 +3,17 @@ import Stripe from 'stripe';
 import { supabase } from '@/lib/supabase';
 import { PLAN_LIMITS } from '@/lib/auth';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
   apiVersion: '2024-06-20' as any,
 });
 
-const PRICE_TO_PLAN: Record<string, string> = {
-  [process.env.STRIPE_PRICE_STARTER!]: 'starter',
-  [process.env.STRIPE_PRICE_PRO!]: 'pro',
-  [process.env.STRIPE_PRICE_SCALE!]: 'scale',
-};
+function getPriceToPlan(): Record<string, string> {
+  return {
+    [process.env.STRIPE_PRICE_STARTER || '']: 'starter',
+    [process.env.STRIPE_PRICE_PRO || '']: 'pro',
+    [process.env.STRIPE_PRICE_SCALE || '']: 'scale',
+  };
+}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
         // Get the subscription to find the price
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const priceId = subscription.items.data[0]?.price.id;
-        const plan = PRICE_TO_PLAN[priceId] || 'starter';
+        const plan = getPriceToPlan()[priceId] || 'starter';
         const limits = PLAN_LIMITS[plan];
 
         // Update the user's plan
