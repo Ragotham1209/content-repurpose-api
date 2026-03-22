@@ -126,8 +126,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Repurpose API error:', error);
 
+    const message =
+      error instanceof Error ? error.message : 'Internal server error';
+
     return NextResponse.json(
-      { error: 'Internal server error', code: 'INTERNAL_ERROR' },
+      { error: message, code: 'INTERNAL_ERROR' },
       { status: 500, headers: corsHeaders }
     );
   }
