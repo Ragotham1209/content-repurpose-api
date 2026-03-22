@@ -8,7 +8,7 @@ function getOpenAI(): OpenAI {
   }
   return _openai;
 }
-const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const MODEL = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
 
 // ---- Input validation schema ----
 export const RepurposeRequestSchema = z.object({
