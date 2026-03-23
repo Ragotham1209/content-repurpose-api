@@ -42,9 +42,10 @@ export default async function Home() {
           <span className="text-[#00ff9d]">Every platform.</span>
         </h1>
         <p className="text-lg text-[#888] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Send a blog post, transcript, or any content. Get back ready-to-post content
-          for Twitter, LinkedIn, Reddit, email newsletters, and Instagram &mdash; all
-          optimized for each platform.
+          94% of marketers repurpose content, but there is no API for it.
+          Repurpose API fills that gap &mdash; send any content, get back
+          platform-ready posts for Twitter, LinkedIn, Reddit, email, and Instagram
+          in a single call.
         </p>
 
         {/* Code example */}
@@ -98,6 +99,109 @@ export default async function Home() {
   }
 }`}
           </pre>
+        </div>
+      </section>
+
+      {/* THE PROBLEM */}
+      <section className="border-t border-[#222] py-20">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">The problem</h2>
+          <p className="text-center text-[#888] mb-12 max-w-2xl mx-auto">
+            Content teams and developers waste hours reformatting the same content
+            for different platforms. The tools that exist today are all manual dashboards
+            &mdash; none of them offer a programmable API.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+              <div className="text-2xl mb-3">&#9203;</div>
+              <h3 className="text-white font-semibold mb-2">Hours of manual work</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                You write a blog post, then spend 30+ minutes rewriting it for Twitter,
+                LinkedIn, Reddit, email, and Instagram. Each platform has different formats,
+                character limits, and audience expectations.
+              </p>
+            </div>
+            <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+              <div className="text-2xl mb-3">&#128268;</div>
+              <h3 className="text-white font-semibold mb-2">No API exists</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                Repurpose.io, Castmagic, Opus Clip &mdash; they are all SaaS dashboards.
+                There is no developer-friendly, API-first solution that you can call
+                programmatically from your code, automation, or AI agent.
+              </p>
+            </div>
+            <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+              <div className="text-2xl mb-3">&#129302;</div>
+              <h3 className="text-white font-semibold mb-2">AI agents need tools</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                AI content agents, newsletter bots, and social media automation workflows
+                need a single API call to transform content. They cannot log into dashboards
+                &mdash; they need endpoints.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="border-t border-[#222] py-20">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-white text-center mb-12">How it works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-[#00ff9d] font-bold font-mono">1</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Send your content</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                Pass a blog post URL, transcript, article, or any long-form text.
+                Choose which platforms you want and what tone to use.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-[#00ff9d] font-bold font-mono">2</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">AI transforms it</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                Our engine rewrites your content natively for each platform &mdash;
+                respecting character limits, formatting conventions, and audience norms.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-12 h-12 rounded-full bg-[#00ff9d]/10 border border-[#00ff9d]/20 flex items-center justify-center mx-auto mb-4">
+                <span className="text-[#00ff9d] font-bold font-mono">3</span>
+              </div>
+              <h3 className="text-white font-semibold mb-2">Post everywhere</h3>
+              <p className="text-sm text-[#888] leading-relaxed">
+                Get back structured JSON with ready-to-publish content for every platform
+                you selected. Copy-paste or pipe directly into your posting workflow.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHO IT'S FOR */}
+      <section className="border-t border-[#222] py-20">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">Who it&apos;s for</h2>
+          <p className="text-center text-[#888] mb-12 max-w-2xl mx-auto">
+            Built for anyone who creates content and wants to distribute it faster.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { role: 'Developers', desc: 'Building content pipelines, posting bots, or SaaS features that need multi-platform output. Drop in one API call instead of writing platform-specific logic.' },
+              { role: 'AI Agent Builders', desc: 'Your agent writes a blog post or newsletter. This API turns it into 5 platform-ready posts in one step. Works with LangChain, n8n, Make, Zapier, and MCP.' },
+              { role: 'Content Marketers', desc: 'Stop manually reformatting your blog posts for social media. Automate your content distribution with a simple API call from your existing tools.' },
+              { role: 'Solo Founders & Creators', desc: 'You write once and need to be everywhere. Use the free tier (100 calls/month) to repurpose your content across 3 platforms without hiring a social media manager.' },
+            ].map((item, i) => (
+              <div key={i} className="bg-[#111] border border-[#222] rounded-xl p-6 hover:border-[#333] transition-colors">
+                <h3 className="text-[#00ff9d] font-semibold text-sm font-mono mb-2">{item.role}</h3>
+                <p className="text-sm text-[#888] leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
