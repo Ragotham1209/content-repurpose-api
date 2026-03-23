@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://content-repurpose-api.vercel.app/sitemap.xml
