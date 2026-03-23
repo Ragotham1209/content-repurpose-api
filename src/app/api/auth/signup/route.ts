@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 import { generateApiKey, PLAN_LIMITS } from '@/lib/auth';
 import { z } from 'zod';
 
 const SignupSchema = z.object({
   email: z.string().email(),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export async function POST(request: NextRequest) {
@@ -13,48 +15,74 @@ export async function POST(request: NextRequest) {
     const parseResult = SignupSchema.safeParse(body);
 
     if (!parseResult.success) {
+      const msg = parseResult.error.issues.map(i => i.message).join(', ');
       return NextResponse.json(
-        { error: 'Valid email required', code: 'VALIDATION_ERROR' },
+        { error: msg, code: 'VALIDATION_ERROR' },
         { status: 400 }
       );
     }
 
-    const { email } = parseResult.data;
+    const { email, password } = parseResult.data;
 
     // Check if email already has an API key
     const { data: existing } = await supabase
       .from('api_keys')
-      .select('key, plan, requests_used, requests_limit')
+      .select('key')
       .eq('email', email)
       .single();
 
     if (existing) {
-      return NextResponse.json({
-        success: true,
-        message: 'API key already exists for this email',
-        api_key: existing.key,
-        plan: existing.plan,
-        requests_used: existing.requests_used,
-        requests_limit: existing.requests_limit,
-      });
+      return NextResponse.json(
+        { error: 'An account with this email already exists. Please log in.', code: 'DUPLICATE' },
+        { status: 409 }
+      );
     }
 
-    // Generate new API key
+    // Create Supabase Auth user using service-role (admin) client
+    const adminAuth = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+
+    const { data: authData, error: authError } = await adminAuth.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true, // auto-confirm for MVP
+    });
+
+    if (authError) {
+      console.error('Auth signup error:', authError);
+      // If user already exists in auth but not in api_keys
+      if (authError.message?.includes('already been registered')) {
+        return NextResponse.json(
+          { error: 'An account with this email already exists. Please log in.', code: 'DUPLICATE' },
+          { status: 409 }
+        );
+      }
+      return NextResponse.json(
+        { error: 'Failed to create account', code: 'AUTH_ERROR' },
+        { status: 500 }
+      );
+    }
+
+    // Generate API key and insert into api_keys
     const apiKey = generateApiKey();
     const plan = 'free';
     const limits = PLAN_LIMITS[plan];
 
-    const { error } = await supabase.from('api_keys').insert({
+    const { error: dbError } = await supabase.from('api_keys').insert({
       key: apiKey,
       email,
+      user_id: authData.user.id,
       plan,
       requests_limit: limits.requests,
     });
 
-    if (error) {
-      console.error('Signup error:', error);
+    if (dbError) {
+      console.error('DB insert error:', dbError);
       return NextResponse.json(
-        { error: 'Failed to create API key', code: 'INTERNAL_ERROR' },
+        { error: 'Account created but failed to generate API key. Please log in and try again.', code: 'INTERNAL_ERROR' },
         { status: 500 }
       );
     }
@@ -62,7 +90,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'API key created successfully',
+        message: 'Account created successfully',
         api_key: apiKey,
         plan,
         requests_limit: limits.requests,

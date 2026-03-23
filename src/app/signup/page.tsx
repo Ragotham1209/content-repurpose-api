@@ -1,13 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { getSupabaseBrowser } from '@/lib/supabase-browser';
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,10 +20,11 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
+      // 1. Create account + API key via server route
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
@@ -30,6 +35,10 @@ export default function SignupPage() {
       }
 
       setApiKey(data.api_key);
+
+      // 2. Sign in to establish browser session
+      const supabase = getSupabaseBrowser();
+      await supabase.auth.signInWithPassword({ email, password });
     } catch {
       setError('Network error. Please try again.');
     } finally {
@@ -57,8 +66,8 @@ export default function SignupPage() {
       </nav>
 
       <div className="max-w-md mx-auto px-6 pt-24 pb-16">
-        <h1 className="text-3xl font-bold text-white mb-2 text-center">Get Your API Key</h1>
-        <p className="text-[#888] text-center mb-8">Enter your email to get a free API key with 100 calls/month.</p>
+        <h1 className="text-3xl font-bold text-white mb-2 text-center">Create Your Account</h1>
+        <p className="text-[#888] text-center mb-8">Sign up to get a free API key with 100 calls/month.</p>
 
         {!apiKey ? (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -75,6 +84,20 @@ export default function SignupPage() {
               />
             </div>
 
+            <div>
+              <label htmlFor="password" className="block text-sm text-[#888] mb-2">Password</label>
+              <input
+                id="password"
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min 8 characters"
+                className="w-full bg-[#111] border border-[#222] rounded-lg px-4 py-3 text-white placeholder-[#555] focus:outline-none focus:border-[#00ff9d] transition-colors"
+              />
+            </div>
+
             {error && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 text-red-400 text-sm">
                 {error}
@@ -86,11 +109,15 @@ export default function SignupPage() {
               disabled={loading}
               className="w-full bg-[#00ff9d] text-black font-semibold py-3 rounded-lg hover:bg-[#00e68a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating...' : 'Get Free API Key'}
+              {loading ? 'Creating account...' : 'Create Account & Get API Key'}
             </button>
 
             <p className="text-xs text-[#555] text-center">
               Free tier: 100 API calls/month. No credit card required.
+            </p>
+            <p className="text-sm text-[#555] text-center">
+              Already have an account?{' '}
+              <a href="/login" className="text-[#00ff9d] hover:underline">Log in</a>
             </p>
           </form>
         ) : (
@@ -101,8 +128,8 @@ export default function SignupPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">API Key Created</h2>
-              <p className="text-sm text-[#888] mb-4">Save this key — it won&apos;t be shown again.</p>
+              <h2 className="text-xl font-bold text-white mb-2">Account Created</h2>
+              <p className="text-sm text-[#888] mb-4">Save this API key — it won&apos;t be shown again.</p>
             </div>
 
             <div className="relative">
@@ -117,26 +144,16 @@ export default function SignupPage() {
               </button>
             </div>
 
-            <div className="bg-[#111] border border-[#222] rounded-xl p-4">
-              <p className="text-xs text-[#888] mb-3">Test it now:</p>
-              <pre className="text-xs font-mono text-[#c8d6e5] overflow-x-auto whitespace-pre-wrap">
-{`curl -X POST ${typeof window !== 'undefined' ? window.location.origin : ''}/api/v1/repurpose \\
-  -H "Content-Type: application/json" \\
-  -H "x-api-key: ${apiKey}" \\
-  -d '{
-    "content": "Hello world post",
-    "platforms": ["twitter", "linkedin"]
-  }'`}
-              </pre>
-            </div>
-
             <div className="flex gap-3">
               <a href="/docs" className="flex-1 text-center bg-[#111] border border-[#222] text-white font-medium py-3 rounded-lg hover:border-[#333] transition-colors text-sm">
                 Read Docs
               </a>
-              <a href="/" className="flex-1 text-center bg-[#00ff9d] text-black font-medium py-3 rounded-lg hover:bg-[#00e68a] transition-colors text-sm">
-                Back to Home
-              </a>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="flex-1 text-center bg-[#00ff9d] text-black font-medium py-3 rounded-lg hover:bg-[#00e68a] transition-colors text-sm"
+              >
+                Go to Dashboard
+              </button>
             </div>
           </div>
         )}

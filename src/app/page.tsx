@@ -1,4 +1,15 @@
-export default function Home() {
+import { createSupabaseServer } from '@/lib/supabase-server';
+
+export default async function Home() {
+  let isLoggedIn = false;
+  try {
+    const supabase = createSupabaseServer();
+    const { data: { user } } = await supabase.auth.getUser();
+    isLoggedIn = !!user;
+  } catch {
+    // Not logged in — that's fine
+  }
+
   return (
     <main className="min-h-screen bg-[#0a0a0a]">
       {/* NAV */}
@@ -10,7 +21,14 @@ export default function Home() {
         <div className="flex items-center gap-6 text-sm text-[#888]">
           <a href="/docs" className="hover:text-white transition-colors">Docs</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="/signup" className="bg-[#00ff9d] text-black font-medium px-4 py-2 rounded-lg hover:bg-[#00e68a] transition-colors">Get API Key</a>
+          {isLoggedIn ? (
+            <a href="/dashboard" className="bg-[#00ff9d] text-black font-medium px-4 py-2 rounded-lg hover:bg-[#00e68a] transition-colors">Dashboard</a>
+          ) : (
+            <>
+              <a href="/login" className="hover:text-white transition-colors">Log In</a>
+              <a href="/signup" className="bg-[#00ff9d] text-black font-medium px-4 py-2 rounded-lg hover:bg-[#00e68a] transition-colors">Get API Key</a>
+            </>
+          )}
         </div>
       </nav>
 
@@ -38,7 +56,7 @@ export default function Home() {
             <span className="ml-2 text-xs text-[#555] font-mono">curl</span>
           </div>
           <pre className="p-4 text-sm font-mono overflow-x-auto text-[#c8d6e5]">
-{`curl -X POST https://your-app.vercel.app/api/v1/repurpose \\
+{`curl -X POST https://content-repurpose-api.vercel.app/api/v1/repurpose \\
   -H "Content-Type: application/json" \\
   -H "x-api-key: rp_live_your_key_here" \\
   -d '{
