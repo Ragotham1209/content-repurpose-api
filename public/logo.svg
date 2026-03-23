@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <rect width="40" height="40" rx="10" fill="#00ff9d"/>
+  <!-- Single input line -->
+  <path d="M8 20h10" stroke="#0a0a0a" stroke-width="3" stroke-linecap="round"/>
+  <!-- Three output branches -->
+  <path d="M18 20c4 0 4-8 8-8" stroke="#0a0a0a" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M18 20h14" stroke="#0a0a0a" stroke-width="3" stroke-linecap="round"/>
+  <path d="M18 20c4 0 4 8 8 8" stroke="#0a0a0a" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Output dots -->
+  <circle cx="30" cy="12" r="2.5" fill="#0a0a0a"/>
+  <circle cx="34" cy="20" r="2.5" fill="#0a0a0a"/>
+  <circle cx="30" cy="28" r="2.5" fill="#0a0a0a"/>
+  <!-- Input dot -->
+  <circle cx="8" cy="20" r="2.5" fill="#0a0a0a"/>
+</svg>

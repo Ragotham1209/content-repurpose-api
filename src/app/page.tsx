@@ -15,7 +15,7 @@ export default async function Home() {
       {/* NAV */}
       <nav className="border-b border-[#222] px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#00ff9d] flex items-center justify-center text-black font-bold text-sm">R</div>
+          <img src="/logo.svg" alt="Repurpose API" className="w-8 h-8" />
           <span className="font-semibold text-white">Repurpose API</span>
         </div>
         <div className="flex items-center gap-6 text-sm text-[#888]">

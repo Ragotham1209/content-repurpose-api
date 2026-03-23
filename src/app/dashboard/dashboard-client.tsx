@@ -62,7 +62,7 @@ function DashboardNav({ email }: { email: string }) {
   return (
     <nav className="border-b border-[#222] px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
       <a href="/" className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-lg bg-[#00ff9d] flex items-center justify-center text-black font-bold text-sm">R</div>
+        <img src="/logo.svg" alt="Repurpose API" className="w-8 h-8" />
         <span className="font-semibold text-white">Repurpose API</span>
       </a>
       <div className="flex items-center gap-4 text-sm">
